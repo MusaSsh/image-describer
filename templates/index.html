@@ -126,26 +126,38 @@
                 <div class="dashboard-header">
                     <div>
                         <h2 class="section-title">Analysis Dashboard</h2>
-                        <p class="section-subtitle">Revisit previous uploads, edit them in the studio, or inspect the generated descriptions.</p>
+                        <p class="section-subtitle">Browse, search, and revisit all images permanently saved in your SQLite database.</p>
                     </div>
-                    {% if history and history|length > 0 %}
-                    <div class="dashboard-actions">
-                        <button type="button" class="btn-clear" onclick="clearAllHistory()">
+                    
+                    <div class="dashboard-top-controls">
+                        <!-- Realtime Search Bar -->
+                        <div class="search-box">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="3 6 5 6 21 6"/>
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                             </svg>
-                            Clear Dashboard
-                        </button>
+                            <input type="text" id="dashboard-search" placeholder="Search saved images & descriptions..." oninput="filterDashboardCards(this.value)">
+                        </div>
+
+                        {% if history and history|length > 0 %}
+                        <div class="dashboard-actions">
+                            <button type="button" class="btn-clear" onclick="clearAllHistory()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                                Clear All
+                            </button>
+                        </div>
+                        {% endif %}
                     </div>
-                    {% endif %}
                 </div>
 
                 <!-- History Cards Grid -->
                 <div class="gallery-grid" id="history-grid">
                     {% if history and history|length > 0 %}
                         {% for item in history %}
-                        <div class="gallery-card" id="history-item-{{ item.id }}">
+                        <div class="gallery-card" id="history-item-{{ item.id }}" data-filename="{{ item.filename|lower }}" data-desc="{{ item.description|lower }}">
                             <div class="gallery-thumb-container" onclick="openModal('{{ item.id }}')">
                                 <img src="{{ item.image_data }}" alt="{{ item.filename }}" class="gallery-thumb">
                                 <div class="thumb-overlay">
@@ -175,13 +187,24 @@
                                     <button type="button" class="btn-read-more" onclick="openModal('{{ item.id }}')">
                                         Read Full &rarr;
                                     </button>
-                                    <button type="button" class="btn-edit-inline" onclick="openStudioFromData('{{ item.id }}', event)">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M12 20h9"/>
-                                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-                                        </svg>
-                                        Edit
-                                    </button>
+                                    <div class="gallery-inline-actions">
+                                        <a href="/export-report/{{ item.id }}" class="btn-report-inline" title="Download Text Report" onclick="event.stopPropagation()">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                                <polyline points="14 2 14 8 20 8"/>
+                                                <line x1="12" y1="18" x2="12" y2="12"/>
+                                                <line x1="9" y1="15" x2="15" y2="15"/>
+                                            </svg>
+                                            Report
+                                        </a>
+                                        <button type="button" class="btn-edit-inline" onclick="openStudioFromData('{{ item.id }}', event)">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M12 20h9"/>
+                                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                                            </svg>
+                                            Edit
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <!-- Hidden Data for Modal & Studio -->
@@ -370,14 +393,50 @@
                                 <polyline points="22 4 12 14.01 9 11.01"/>
                             </svg>
                             <h2>AI Description</h2>
+                            {% if saved_id %}
+                            <span class="badge-saved" title="Stored in local SQLite database">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                    <polyline points="17 21 17 13 7 13 7 21"/>
+                                    <polyline points="7 3 7 8 15 8"/>
+                                </svg>
+                                Saved to DB #{{ saved_id }}
+                            </span>
+                            {% endif %}
                         </div>
-                        <button type="button" class="btn-copy" onclick="copyDescription()" title="Copy description to clipboard" id="btn-copy">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                            </svg>
-                            <span id="copy-text">Copy</span>
-                        </button>
+
+                        <div class="result-actions-group">
+                            <button type="button" class="btn-copy" onclick="copyDescription()" title="Copy description to clipboard" id="btn-copy">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                                <span id="copy-text">Copy</span>
+                            </button>
+
+                            {% if saved_id %}
+                            <a href="/export-report/{{ saved_id }}" class="btn-action-pill" title="Download Text Report">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="12" y1="18" x2="12" y2="12"/>
+                                    <line x1="9" y1="15" x2="15" y2="15"/>
+                                </svg>
+                                <span>Report</span>
+                            </a>
+                            {% endif %}
+
+                            {% if image_data %}
+                            <button type="button" class="btn-action-pill" onclick="downloadImageDirect('{{ image_data }}', '{{ filename }}')" title="Download Image">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                <span>Image</span>
+                            </button>
+                            {% endif %}
+                        </div>
                     </div>
                     <div class="result-body">
                         <p id="result-description-text">{{ description }}</p>
@@ -637,13 +696,32 @@
                 <div class="modal-details">
                     <div class="modal-meta-row">
                         <span class="modal-timestamp" id="modal-timestamp">Timestamp</span>
-                        <button type="button" class="btn-modal-studio" id="btn-modal-studio-edit">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 20h9"/>
-                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-                            </svg>
-                            Edit in Studio
-                        </button>
+                        <div class="modal-actions-row">
+                            <a href="#" id="modal-btn-report" class="btn-modal-action" title="Download Text Report">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="12" y1="18" x2="12" y2="12"/>
+                                    <line x1="9" y1="15" x2="15" y2="15"/>
+                                </svg>
+                                Report
+                            </a>
+                            <button type="button" class="btn-modal-action" id="modal-btn-download-img" title="Download Image">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                                Image
+                            </button>
+                            <button type="button" class="btn-modal-studio" id="btn-modal-studio-edit">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 20h9"/>
+                                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                                </svg>
+                                Edit in Studio
+                            </button>
+                        </div>
                     </div>
                     <h4 class="modal-analysis-heading">AI Analysis:</h4>
                     <p class="modal-description" id="modal-description"></p>
@@ -808,6 +886,14 @@
             document.getElementById('modal-description').textContent = data.description;
             document.getElementById('modal-image').src = data.image_data;
 
+            const reportBtn = document.getElementById('modal-btn-report');
+            if (reportBtn) reportBtn.href = `/export-report/${data.id}`;
+
+            const downloadImgBtn = document.getElementById('modal-btn-download-img');
+            if (downloadImgBtn) {
+                downloadImgBtn.onclick = () => downloadImageDirect(data.image_data, data.filename);
+            }
+
             const editBtn = document.getElementById('btn-modal-studio-edit');
             editBtn.onclick = () => {
                 closeModal();
@@ -817,6 +903,31 @@
             const modal = document.getElementById('detail-modal');
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+        }
+
+        function filterDashboardCards(query) {
+            const q = query.toLowerCase().trim();
+            const cards = document.querySelectorAll('#history-grid .gallery-card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const filename = card.getAttribute('data-filename') || '';
+                const desc = card.getAttribute('data-desc') || '';
+                if (!q || filename.includes(q) || desc.includes(q)) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function downloadImageDirect(dataUri, filename) {
+            const link = document.createElement('a');
+            link.download = filename || 'visioniq_image.png';
+            link.href = dataUri;
+            link.click();
+            showToast('Image download started!');
         }
 
         function closeModal(e) {
