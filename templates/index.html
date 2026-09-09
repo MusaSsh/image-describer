@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VisionIQ — Intelligent Image Describer</title>
+    <title>VisionIQ — Intelligent Image Describer & Studio</title>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,17 +61,17 @@
             <div class="hero-section">
                 <div class="hero-badge">
                     <span class="pulse-dot"></span>
-                    Powered by Gemini 2.5 Flash Vision
+                    Powered by Gemini 2.5 Flash Vision & Image Studio
                 </div>
-                <h1 class="hero-title">Transform Images into <br><span class="gradient-text">Intelligent Descriptions</span></h1>
-                <p class="hero-subtitle">Upload any picture, diagram, artwork or screenshot. Our vision AI analyzes every nuance, object, mood, and context with human-grade perception.</p>
+                <h1 class="hero-title">Transform & Annotate Images with <br><span class="gradient-text">Intelligent Vision AI</span></h1>
+                <p class="hero-subtitle">Upload any picture, adjust camera filters, draw custom arrows and markers, and let our AI describe every detail with human-grade perception.</p>
                 
                 <div class="hero-actions">
                     <button type="button" class="btn-primary" onclick="switchTab('describer')">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
                         </svg>
-                        Try Image Describer Now
+                        Launch Describer & Studio
                     </button>
                     <a href="#dashboard-section" class="btn-secondary">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -93,18 +93,19 @@
                                 <path d="M2 12h20"/>
                             </svg>
                         </div>
-                        <h3>Visual Understanding</h3>
-                        <p>Identifies intricate objects, lighting conditions, scenery, fine details, and contextual actions.</p>
+                        <h3>Deep Visual AI</h3>
+                        <p>Understands complex context, fine objects, actions, text, emotion, colors, and spatial arrangements.</p>
                     </div>
 
                     <div class="feature-card">
                         <div class="feature-icon feature-icon-cyan">
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                                <path d="M12 20h9"/>
+                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
                             </svg>
                         </div>
-                        <h3>Lightning Fast</h3>
-                        <p>Powered by Google's latest multimodal Gemini 2.5 Flash model for sub-second responses.</p>
+                        <h3>Camera Editor & Markers</h3>
+                        <p>Adjust brightness/contrast, apply photo filters, rotate, and draw arrows or marker callouts on your image.</p>
                     </div>
 
                     <div class="feature-card">
@@ -114,8 +115,8 @@
                                 <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                             </svg>
                         </div>
-                        <h3>Private & Streamlined</h3>
-                        <p>Your uploaded media is processed safely and cached in your session dashboard for rapid review.</p>
+                        <h3>Instant & Private</h3>
+                        <p>Processed in real-time with Google Gemini 2.5 Flash without persistent external tracking.</p>
                     </div>
                 </div>
             </div>
@@ -125,7 +126,7 @@
                 <div class="dashboard-header">
                     <div>
                         <h2 class="section-title">Analysis Dashboard</h2>
-                        <p class="section-subtitle">Browse and revisit all images uploaded and analyzed in this session.</p>
+                        <p class="section-subtitle">Revisit previous uploads, edit them in the studio, or inspect the generated descriptions.</p>
                     </div>
                     {% if history and history|length > 0 %}
                     <div class="dashboard-actions">
@@ -169,11 +170,21 @@
                                 </div>
                                 <span class="gallery-time">{{ item.timestamp }}</span>
                                 <p class="gallery-snippet">{{ item.snippet }}</p>
-                                <button type="button" class="btn-read-more" onclick="openModal('{{ item.id }}')">
-                                    Read Full Analysis &rarr;
-                                </button>
+                                
+                                <div class="gallery-card-footer">
+                                    <button type="button" class="btn-read-more" onclick="openModal('{{ item.id }}')">
+                                        Read Full &rarr;
+                                    </button>
+                                    <button type="button" class="btn-edit-inline" onclick="openStudioFromData('{{ item.id }}', event)">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12 20h9"/>
+                                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                                        </svg>
+                                        Edit
+                                    </button>
+                                </div>
                             </div>
-                            <!-- Hidden Data for Modal -->
+                            <!-- Hidden Data for Modal & Studio -->
                             <script type="application/json" id="data-{{ item.id }}">
                                 {
                                     "id": {{ item.id }},
@@ -216,9 +227,9 @@
             <div class="describer-container">
                 
                 <div class="describer-header">
-                    <div class="describer-badge">Vision AI Workspace</div>
-                    <h2>Describe Any Image</h2>
-                    <p class="describer-subtitle">Upload a photo, screenshot, or graphic and receive an in-depth AI breakdown of its contents.</p>
+                    <div class="describer-badge">Vision AI & Studio Workspace</div>
+                    <h2>Describe & Annotate Images</h2>
+                    <p class="describer-subtitle">Upload a photo, screenshot, or graphic. Optionally edit camera settings and add markers before analyzing!</p>
                 </div>
 
                 <!-- Upload Card -->
@@ -226,34 +237,53 @@
                     <form action="/analyze" method="post" enctype="multipart/form-data" id="upload-form">
                         
                         <!-- Dropzone -->
-                        <label for="file-input" class="dropzone" id="dropzone">
-                            <div class="dropzone-content" id="dropzone-content">
-                                <div class="dropzone-icon">
-                                    <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                        <polyline points="17 8 12 3 7 8"/>
-                                        <line x1="12" y1="3" x2="12" y2="15"/>
-                                    </svg>
+                        <div class="dropzone-wrapper">
+                            <label for="file-input" class="dropzone" id="dropzone">
+                                <div class="dropzone-content" id="dropzone-content">
+                                    <div class="dropzone-icon">
+                                        <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                            <polyline points="17 8 12 3 7 8"/>
+                                            <line x1="12" y1="3" x2="12" y2="15"/>
+                                        </svg>
+                                    </div>
+                                    <p class="dropzone-title">Drop your image here</p>
+                                    <p class="dropzone-hint">or click to browse from device</p>
+                                    <div class="dropzone-formats">
+                                        <span class="format-badge">PNG</span>
+                                        <span class="format-badge">JPG</span>
+                                        <span class="format-badge">JPEG</span>
+                                        <span class="format-badge">WEBP</span>
+                                    </div>
                                 </div>
-                                <p class="dropzone-title">Drop your image here</p>
-                                <p class="dropzone-hint">or click to browse from device</p>
-                                <div class="dropzone-formats">
-                                    <span class="format-badge">PNG</span>
-                                    <span class="format-badge">JPG</span>
-                                    <span class="format-badge">JPEG</span>
-                                    <span class="format-badge">WEBP</span>
-                                </div>
-                            </div>
 
-                            <!-- Live preview -->
-                            <div class="preview-container hidden" id="preview-container">
-                                <img id="preview-image" src="" alt="Preview">
-                                <div class="preview-overlay">
-                                    <span class="preview-change">Click to choose a different image</span>
+                                <!-- Live preview -->
+                                <div class="preview-container hidden" id="preview-container">
+                                    <img id="preview-image" src="" alt="Preview">
+                                    <div class="preview-overlay">
+                                        <span class="preview-change">Click to choose a different image</span>
+                                    </div>
                                 </div>
+                                <input id="file-input" type="file" name="file" accept="image/*" required />
+                            </label>
+
+                            <!-- Floating Action Bar for Selected Image -->
+                            <div class="preview-action-bar hidden" id="preview-action-bar">
+                                <button type="button" class="btn-studio-trigger" onclick="openStudioFromPreview()">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 20h9"/>
+                                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                                    </svg>
+                                    <span>Edit & Add Markers</span>
+                                </button>
+                                <span class="edited-indicator hidden" id="edited-indicator">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"/>
+                                    </svg>
+                                    Custom Edits Applied
+                                </span>
                             </div>
-                            <input id="file-input" type="file" name="file" accept="image/*" required />
-                        </label>
+                        </div>
 
                         <!-- File info bar -->
                         <div class="file-info hidden" id="file-info">
@@ -297,7 +327,7 @@
                 {% endif %}
 
                 {% if description %}
-                <!-- Uploaded Image Card with Dismiss Cross -->
+                <!-- Uploaded Image Card with Dismiss Cross & Edit Button -->
                 {% if image_data %}
                 <div class="result-card image-card animate-in" id="uploaded-image-card">
                     <div class="result-header">
@@ -309,15 +339,24 @@
                             </svg>
                             <h2>{{ filename }}</h2>
                         </div>
-                        <button type="button" class="btn-remove" id="btn-remove" title="Remove image view" onclick="removeImage()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="18" y1="6" x2="6" y2="18"/>
-                                <line x1="6" y1="6" x2="18" y2="18"/>
-                            </svg>
-                        </button>
+                        <div class="result-header-actions">
+                            <button type="button" class="btn-header-edit" onclick="openStudioFromImageSrc('{{ image_data }}', '{{ filename }}')" title="Edit this image in Studio">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 20h9"/>
+                                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                                </svg>
+                                <span>Edit in Studio</span>
+                            </button>
+                            <button type="button" class="btn-remove" id="btn-remove" title="Remove image view" onclick="removeImage()">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                     <div class="uploaded-image-wrapper">
-                        <img src="{{ image_data }}" alt="{{ filename }}" class="uploaded-image">
+                        <img src="{{ image_data }}" alt="{{ filename }}" class="uploaded-image" id="result-uploaded-image">
                     </div>
                 </div>
                 {% endif %}
@@ -351,6 +390,227 @@
 
     </main>
 
+    <!-- ================= IMAGE STUDIO / ANNOTATION MODAL ================= -->
+    <div class="modal-backdrop hidden" id="studio-modal" onclick="closeStudio(event)">
+        <div class="studio-card" onclick="event.stopPropagation()">
+            
+            <!-- Studio Header -->
+            <div class="studio-header">
+                <div class="studio-title-group">
+                    <div class="studio-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 20h9"/>
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 id="studio-filename">Image Studio & Annotator</h3>
+                        <span class="studio-caption">Add markers, adjust camera filters, or crop & rotate</span>
+                    </div>
+                </div>
+
+                <div class="studio-top-actions">
+                    <button type="button" class="btn-studio-action" onclick="undoStudioCanvas()" title="Undo (Ctrl+Z)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 7v6h6"/>
+                            <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>
+                        </svg>
+                        <span>Undo</span>
+                    </button>
+                    <button type="button" class="btn-studio-action" onclick="resetStudioCanvas()" title="Reset all changes">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="1 4 1 10 7 10"/>
+                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                        </svg>
+                        <span>Reset</span>
+                    </button>
+                    <button type="button" class="btn-studio-action" onclick="downloadStudioCanvas()" title="Download image to device">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        <span>Save</span>
+                    </button>
+                    <button type="button" class="btn-studio-apply" onclick="applyStudioChanges()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        <span>Apply & Use in Describer</span>
+                    </button>
+                    <button type="button" class="modal-close-btn" onclick="closeStudio()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Studio Main Body (Sidebar Tools + Canvas Area) -->
+            <div class="studio-body">
+                
+                <!-- Left Toolbar -->
+                <div class="studio-sidebar">
+                    
+                    <!-- Mode Tabs -->
+                    <div class="studio-mode-tabs">
+                        <button type="button" class="studio-mode-btn active" id="mode-btn-draw" onclick="setStudioMode('draw')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 20h9"/>
+                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                            </svg>
+                            Draw & Mark
+                        </button>
+                        <button type="button" class="studio-mode-btn" id="mode-btn-filters" onclick="setStudioMode('filters')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 2a10 10 0 0 0 0 20v-20z"/>
+                            </svg>
+                            Camera Adjust
+                        </button>
+                    </div>
+
+                    <!-- TAB A: DRAWING & MARKERS TOOLSET -->
+                    <div class="studio-tool-group" id="toolgroup-draw">
+                        <span class="toolgroup-title">Annotation Tool</span>
+                        <div class="tool-buttons-grid">
+                            <button type="button" class="tool-btn active" id="tool-btn-pen" onclick="setDrawingTool('pen')" title="Pen / Marker">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+                                    <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+                                    <path d="M2 2l7.586 7.586"/>
+                                </svg>
+                                <span>Marker</span>
+                            </button>
+                            <button type="button" class="tool-btn" id="tool-btn-highlighter" onclick="setDrawingTool('highlighter')" title="Highlighter">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9 11l-6 6v3h3l6-6"/>
+                                    <path d="M22 2l-7 7 3 3 7-7z"/>
+                                </svg>
+                                <span>Highlight</span>
+                            </button>
+                            <button type="button" class="tool-btn" id="tool-btn-arrow" onclick="setDrawingTool('arrow')" title="Arrow Pointer">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="19" x2="19" y2="5"/>
+                                    <polyline points="10 5 19 5 19 14"/>
+                                </svg>
+                                <span>Arrow</span>
+                            </button>
+                            <button type="button" class="tool-btn" id="tool-btn-rect" onclick="setDrawingTool('rect')" title="Rectangle Box">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                </svg>
+                                <span>Box</span>
+                            </button>
+                            <button type="button" class="tool-btn" id="tool-btn-circle" onclick="setDrawingTool('circle')" title="Circle Callout">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="9"/>
+                                </svg>
+                                <span>Circle</span>
+                            </button>
+                            <button type="button" class="tool-btn" id="tool-btn-text" onclick="setDrawingTool('text')" title="Add Text Label">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="4 7 4 4 20 4 20 7"/>
+                                    <line x1="9" y1="20" x2="15" y2="20"/>
+                                    <line x1="12" y1="4" x2="12" y2="20"/>
+                                </svg>
+                                <span>Text</span>
+                            </button>
+                        </div>
+
+                        <!-- Color Palette -->
+                        <span class="toolgroup-title" style="margin-top: 14px;">Marker Color</span>
+                        <div class="color-palette">
+                            <button type="button" class="color-swatch active" style="background:#ef4444;" onclick="setMarkerColor('#ef4444')" title="Red"></button>
+                            <button type="button" class="color-swatch" style="background:#eab308;" onclick="setMarkerColor('#eab308')" title="Yellow"></button>
+                            <button type="button" class="color-swatch" style="background:#22c55e;" onclick="setMarkerColor('#22c55e')" title="Green"></button>
+                            <button type="button" class="color-swatch" style="background:#3b82f6;" onclick="setMarkerColor('#3b82f6')" title="Blue"></button>
+                            <button type="button" class="color-swatch" style="background:#a855f7;" onclick="setMarkerColor('#a855f7')" title="Purple"></button>
+                            <button type="button" class="color-swatch" style="background:#ffffff; border: 1px solid #cbd5e1;" onclick="setMarkerColor('#ffffff')" title="White"></button>
+                            <button type="button" class="color-swatch" style="background:#0f172a;" onclick="setMarkerColor('#0f172a')" title="Black"></button>
+                            
+                            <label class="color-picker-label" title="Custom color">
+                                <input type="color" id="custom-color-picker" value="#6366f1" onchange="setMarkerColor(this.value)">
+                                <span class="custom-color-icon">🎨</span>
+                            </label>
+                        </div>
+
+                        <!-- Stroke Size -->
+                        <span class="toolgroup-title" style="margin-top: 14px;">Line Width</span>
+                        <div class="stroke-slider-container">
+                            <input type="range" id="stroke-slider" min="2" max="24" value="5" oninput="updateStrokeWidth(this.value)">
+                            <div class="stroke-preview-circle" id="stroke-preview" style="width: 5px; height: 5px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- TAB B: CAMERA SETTINGS & FILTERS -->
+                    <div class="studio-tool-group hidden" id="toolgroup-filters">
+                        <span class="toolgroup-title">Camera Adjustments</span>
+                        
+                        <div class="filter-slider-item">
+                            <div class="filter-slider-label">
+                                <span>☀️ Brightness</span>
+                                <span id="val-brightness">100%</span>
+                            </div>
+                            <input type="range" id="slider-brightness" min="40" max="180" value="100" oninput="updateFilter('brightness', this.value)">
+                        </div>
+
+                        <div class="filter-slider-item">
+                            <div class="filter-slider-label">
+                                <span>🌓 Contrast</span>
+                                <span id="val-contrast">100%</span>
+                            </div>
+                            <input type="range" id="slider-contrast" min="40" max="180" value="100" oninput="updateFilter('contrast', this.value)">
+                        </div>
+
+                        <div class="filter-slider-item">
+                            <div class="filter-slider-label">
+                                <span>🎨 Saturation</span>
+                                <span id="val-saturate">100%</span>
+                            </div>
+                            <input type="range" id="slider-saturate" min="0" max="200" value="100" oninput="updateFilter('saturate', this.value)">
+                        </div>
+
+                        <!-- Transform Controls -->
+                        <span class="toolgroup-title" style="margin-top: 16px;">Orientation</span>
+                        <div class="transform-buttons-grid">
+                            <button type="button" class="transform-btn" onclick="rotateStudioCanvas(-90)" title="Rotate Left">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="1 4 1 10 7 10"/>
+                                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                                </svg>
+                                <span>-90°</span>
+                            </button>
+                            <button type="button" class="transform-btn" onclick="rotateStudioCanvas(90)" title="Rotate Right">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="23 4 23 10 17 10"/>
+                                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                                </svg>
+                                <span>+90°</span>
+                            </button>
+                            <button type="button" class="transform-btn" onclick="flipStudioCanvas('h')" title="Flip Horizontal">
+                                <span>↔️ Flip H</span>
+                            </button>
+                            <button type="button" class="transform-btn" onclick="flipStudioCanvas('v')" title="Flip Vertical">
+                                <span>↕️ Flip V</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Center Canvas Viewport -->
+                <div class="studio-canvas-viewport" id="studio-viewport">
+                    <div class="studio-canvas-wrapper" id="canvas-wrapper">
+                        <canvas id="studio-canvas"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <!-- Modal for Detailed Dashboard View -->
     <div class="modal-backdrop hidden" id="detail-modal" onclick="closeModal(event)">
         <div class="modal-card" onclick="event.stopPropagation()">
@@ -375,7 +635,16 @@
                     <img id="modal-image" src="" alt="Analyzed image" class="modal-image">
                 </div>
                 <div class="modal-details">
-                    <span class="modal-timestamp" id="modal-timestamp">Timestamp</span>
+                    <div class="modal-meta-row">
+                        <span class="modal-timestamp" id="modal-timestamp">Timestamp</span>
+                        <button type="button" class="btn-modal-studio" id="btn-modal-studio-edit">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 20h9"/>
+                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                            </svg>
+                            Edit in Studio
+                        </button>
+                    </div>
                     <h4 class="modal-analysis-heading">AI Analysis:</h4>
                     <p class="modal-description" id="modal-description"></p>
                 </div>
@@ -393,7 +662,7 @@
             <span>&bull;</span>
             <span>FastAPI & Python 3.14</span>
             <span>&bull;</span>
-            <span>VisionIQ</span>
+            <span>VisionIQ Studio</span>
         </div>
     </footer>
 
@@ -424,11 +693,9 @@
                 homePanel.classList.remove('active');
             }
 
-            // Update URL hash smoothly without reload
             window.history.replaceState(null, '', '#' + tabName);
         }
 
-        // Initialize based on URL hash or data attribute
         window.addEventListener('DOMContentLoaded', () => {
             const hash = window.location.hash.replace('#', '');
             if (hash === 'describer' || hash === 'home') {
@@ -442,12 +709,16 @@
         const dropzoneContent = document.getElementById('dropzone-content');
         const previewContainer = document.getElementById('preview-container');
         const previewImage = document.getElementById('preview-image');
+        const previewActionBar = document.getElementById('preview-action-bar');
         const fileInfo = document.getElementById('file-info');
         const fileName = document.getElementById('file-name');
         const fileSize = document.getElementById('file-size');
         const submitBtn = document.getElementById('submit-btn');
         const btnText = document.getElementById('btn-text');
         const btnLoading = document.getElementById('btn-loading');
+
+        let currentLoadedImageSrc = null;
+        let currentLoadedFileName = 'image.png';
 
         function formatFileSize(bytes) {
             if (bytes < 1024) return bytes + ' B';
@@ -459,12 +730,15 @@
             fileInput.addEventListener('change', (e) => {
                 if (e.target.files.length > 0) {
                     const file = e.target.files[0];
+                    currentLoadedFileName = file.name;
                     
                     const reader = new FileReader();
                     reader.onload = (ev) => {
-                        previewImage.src = ev.target.result;
+                        currentLoadedImageSrc = ev.target.result;
+                        previewImage.src = currentLoadedImageSrc;
                         dropzoneContent.classList.add('hidden');
                         previewContainer.classList.remove('hidden');
+                        previewActionBar.classList.remove('hidden');
                     };
                     reader.readAsDataURL(file);
 
@@ -534,6 +808,12 @@
             document.getElementById('modal-description').textContent = data.description;
             document.getElementById('modal-image').src = data.image_data;
 
+            const editBtn = document.getElementById('btn-modal-studio-edit');
+            editBtn.onclick = () => {
+                closeModal();
+                openStudioFromImageSrc(data.image_data, data.filename);
+            };
+
             const modal = document.getElementById('detail-modal');
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -544,6 +824,20 @@
             const modal = document.getElementById('detail-modal');
             modal.classList.add('hidden');
             document.body.style.overflow = 'auto';
+        }
+
+        function openStudioFromData(id, event) {
+            if (event) event.stopPropagation();
+            const scriptTag = document.getElementById('data-' + id);
+            if (!scriptTag) return;
+            const data = JSON.parse(scriptTag.textContent);
+            openStudioFromImageSrc(data.image_data, data.filename);
+        }
+
+        function openStudioFromPreview() {
+            if (currentLoadedImageSrc) {
+                openStudioFromImageSrc(currentLoadedImageSrc, currentLoadedFileName);
+            }
         }
 
         // Delete dashboard history item
@@ -590,6 +884,395 @@
             toast.textContent = msg;
             toast.classList.remove('hidden');
             setTimeout(() => toast.classList.add('hidden'), 2500);
+        }
+
+        /* ==========================================================================
+           VISIONIQ IMAGE STUDIO / ANNOTATION ENGINE
+           ========================================================================== */
+        const canvas = document.getElementById('studio-canvas');
+        const ctx = canvas ? canvas.getContext('2d') : null;
+        let baseImage = new Image();
+        let studioOriginalSrc = '';
+        let studioFileName = 'edited_image.png';
+
+        // State
+        let studioMode = 'draw'; // 'draw' or 'filters'
+        let currentTool = 'pen'; // 'pen', 'highlighter', 'arrow', 'rect', 'circle', 'text'
+        let markerColor = '#ef4444';
+        let strokeWidth = 5;
+
+        // Camera Filters State
+        let filters = {
+            brightness: 100,
+            contrast: 100,
+            saturate: 100
+        };
+        let rotationAngle = 0;
+        let flipH = 1;
+        let flipV = 1;
+
+        // Drawing History for Undo
+        let strokeHistory = [];
+        let isDrawing = false;
+        let startX = 0;
+        let startY = 0;
+        let snapshotData = null;
+
+        function openStudioFromImageSrc(imgSrc, fileName) {
+            studioOriginalSrc = imgSrc;
+            studioFileName = fileName || 'image.png';
+            document.getElementById('studio-filename').textContent = studioFileName;
+
+            // Reset studio state
+            rotationAngle = 0;
+            flipH = 1;
+            flipV = 1;
+            filters = { brightness: 100, contrast: 100, saturate: 100 };
+            document.getElementById('slider-brightness').value = 100;
+            document.getElementById('slider-contrast').value = 100;
+            document.getElementById('slider-saturate').value = 100;
+            document.getElementById('val-brightness').textContent = '100%';
+            document.getElementById('val-contrast').textContent = '100%';
+            document.getElementById('val-saturate').textContent = '100%';
+
+            strokeHistory = [];
+            setStudioMode('draw');
+            setDrawingTool('pen');
+
+            baseImage = new Image();
+            baseImage.crossOrigin = 'anonymous';
+            baseImage.onload = () => {
+                initStudioCanvas();
+                const modal = document.getElementById('studio-modal');
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            };
+            baseImage.src = imgSrc;
+        }
+
+        function closeStudio(e) {
+            if (e && e.target !== e.currentTarget && e.target.closest('.studio-card')) return;
+            const modal = document.getElementById('studio-modal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function setStudioMode(mode) {
+            studioMode = mode;
+            const drawBtn = document.getElementById('mode-btn-draw');
+            const filtersBtn = document.getElementById('mode-btn-filters');
+            const drawGroup = document.getElementById('toolgroup-draw');
+            const filtersGroup = document.getElementById('toolgroup-filters');
+
+            if (mode === 'draw') {
+                drawBtn.classList.add('active');
+                filtersBtn.classList.remove('active');
+                drawGroup.classList.remove('hidden');
+                filtersGroup.classList.add('hidden');
+            } else {
+                filtersBtn.classList.add('active');
+                drawBtn.classList.remove('active');
+                filtersGroup.classList.remove('hidden');
+                drawGroup.classList.add('hidden');
+            }
+        }
+
+        function setDrawingTool(tool) {
+            currentTool = tool;
+            ['pen', 'highlighter', 'arrow', 'rect', 'circle', 'text'].forEach(t => {
+                const el = document.getElementById('tool-btn-' + t);
+                if (el) el.classList.toggle('active', t === tool);
+            });
+        }
+
+        function setMarkerColor(color) {
+            markerColor = color;
+            document.querySelectorAll('.color-swatch').forEach(swatch => {
+                swatch.classList.toggle('active', swatch.style.backgroundColor === color || swatch.title.toLowerCase() === color);
+            });
+            const preview = document.getElementById('stroke-preview');
+            if (preview) preview.style.backgroundColor = color;
+        }
+
+        function updateStrokeWidth(val) {
+            strokeWidth = parseInt(val);
+            const preview = document.getElementById('stroke-preview');
+            if (preview) {
+                preview.style.width = val + 'px';
+                preview.style.height = val + 'px';
+            }
+        }
+
+        function updateFilter(name, val) {
+            filters[name] = parseInt(val);
+            document.getElementById('val-' + name).textContent = val + '%';
+            redrawStudioCanvas();
+        }
+
+        function rotateStudioCanvas(deg) {
+            rotationAngle = (rotationAngle + deg) % 360;
+            redrawStudioCanvas();
+        }
+
+        function flipStudioCanvas(dir) {
+            if (dir === 'h') flipH *= -1;
+            if (dir === 'v') flipV *= -1;
+            redrawStudioCanvas();
+        }
+
+        // Initialize canvas resolution
+        function initStudioCanvas() {
+            canvas.width = baseImage.naturalWidth || baseImage.width || 800;
+            canvas.height = baseImage.naturalHeight || baseImage.height || 600;
+            redrawStudioCanvas();
+            saveCanvasState();
+        }
+
+        // Redraw base image + filters + transformation
+        function redrawStudioCanvas() {
+            if (!ctx) return;
+            ctx.save();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Apply filter string
+            ctx.filter = `brightness(${filters.brightness}%) contrast(${filters.contrast}%) saturate(${filters.saturate}%)`;
+
+            // Apply transformations
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate((rotationAngle * Math.PI) / 180);
+            ctx.scale(flipH, flipV);
+            ctx.drawImage(baseImage, -canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
+            ctx.restore();
+
+            // Re-apply strokes from history if any
+            if (strokeHistory.length > 0) {
+                const lastState = strokeHistory[strokeHistory.length - 1];
+                ctx.drawImage(lastState, 0, 0);
+            }
+        }
+
+        function saveCanvasState() {
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.drawImage(canvas, 0, 0);
+            strokeHistory.push(tempCanvas);
+            if (strokeHistory.length > 20) strokeHistory.shift();
+        }
+
+        function undoStudioCanvas() {
+            if (strokeHistory.length > 1) {
+                strokeHistory.pop();
+                const prevState = strokeHistory[strokeHistory.length - 1];
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(prevState, 0, 0);
+                showToast('Undo performed');
+            } else {
+                showToast('Nothing to undo');
+            }
+        }
+
+        function resetStudioCanvas() {
+            rotationAngle = 0;
+            flipH = 1;
+            flipV = 1;
+            filters = { brightness: 100, contrast: 100, saturate: 100 };
+            document.getElementById('slider-brightness').value = 100;
+            document.getElementById('slider-contrast').value = 100;
+            document.getElementById('slider-saturate').value = 100;
+            document.getElementById('val-brightness').textContent = '100%';
+            document.getElementById('val-contrast').textContent = '100%';
+            document.getElementById('val-saturate').textContent = '100%';
+            strokeHistory = [];
+            redrawStudioCanvas();
+            saveCanvasState();
+            showToast('Canvas reset to original');
+        }
+
+        function downloadStudioCanvas() {
+            const link = document.createElement('a');
+            link.download = 'visioniq_' + studioFileName;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showToast('Image downloaded!');
+        }
+
+        // Apply back to active describer form
+        function applyStudioChanges() {
+            const dataUrl = canvas.toDataURL('image/png');
+            currentLoadedImageSrc = dataUrl;
+            
+            // Switch to describer tab
+            switchTab('describer');
+
+            // Update preview in dropzone
+            previewImage.src = dataUrl;
+            dropzoneContent.classList.add('hidden');
+            previewContainer.classList.remove('hidden');
+            previewActionBar.classList.remove('hidden');
+            document.getElementById('edited-indicator').classList.remove('hidden');
+            dropzone.classList.add('has-file');
+
+            // Convert canvas dataURL to File for file-input
+            fetch(dataUrl)
+                .then(res => res.blob())
+                .then(blob => {
+                    const editedFile = new File([blob], studioFileName, { type: 'image/png' });
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(editedFile);
+                    fileInput.files = dataTransfer.files;
+
+                    fileName.textContent = '✏️ ' + studioFileName;
+                    fileSize.textContent = formatFileSize(blob.size);
+                    fileInfo.classList.remove('hidden');
+                });
+
+            closeStudio();
+            showToast('✨ Edited image with markers ready for AI analysis!');
+        }
+
+        // Mouse & Touch Drawing Handlers
+        function getCanvasCoordinates(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
+        }
+
+        if (canvas) {
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseleave', stopDrawing);
+
+            canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawing(e); }, { passive: false });
+            canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); }, { passive: false });
+            canvas.addEventListener('touchend', (e) => { e.preventDefault(); stopDrawing(e); });
+        }
+
+        function startDrawing(e) {
+            if (studioMode !== 'draw') return;
+            const coords = getCanvasCoordinates(e);
+            startX = coords.x;
+            startY = coords.y;
+
+            if (currentTool === 'text') {
+                const userText = prompt('Enter text label for marker:');
+                if (userText) {
+                    ctx.save();
+                    ctx.font = `bold ${Math.max(16, strokeWidth * 4)}px 'Plus Jakarta Sans', sans-serif`;
+                    ctx.fillStyle = markerColor;
+                    ctx.shadowColor = 'rgba(0,0,0,0.6)';
+                    ctx.shadowBlur = 6;
+                    ctx.fillText(userText, startX, startY);
+                    ctx.restore();
+                    saveCanvasState();
+                }
+                return;
+            }
+
+            isDrawing = true;
+            snapshotData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+            if (currentTool === 'pen' || currentTool === 'highlighter') {
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+            }
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const coords = getCanvasCoordinates(e);
+            const curX = coords.x;
+            const curY = coords.y;
+
+            if (currentTool === 'pen') {
+                ctx.lineWidth = strokeWidth;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = markerColor;
+                ctx.lineTo(curX, curY);
+                ctx.stroke();
+            } else if (currentTool === 'highlighter') {
+                ctx.lineWidth = strokeWidth * 2.5;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = hexToRgba(markerColor, 0.35);
+                ctx.lineTo(curX, curY);
+                ctx.stroke();
+            } else if (currentTool === 'arrow' || currentTool === 'rect' || currentTool === 'circle') {
+                ctx.putImageData(snapshotData, 0, 0);
+                ctx.lineWidth = strokeWidth;
+                ctx.strokeStyle = markerColor;
+                ctx.fillStyle = hexToRgba(markerColor, 0.15);
+
+                if (currentTool === 'rect') {
+                    ctx.strokeRect(startX, startY, curX - startX, curY - startY);
+                    ctx.fillRect(startX, startY, curX - startX, curY - startY);
+                } else if (currentTool === 'circle') {
+                    ctx.beginPath();
+                    const radiusX = Math.abs(curX - startX) / 2;
+                    const radiusY = Math.abs(curY - startY) / 2;
+                    const centerX = startX + (curX - startX) / 2;
+                    const centerY = startY + (curY - startY) / 2;
+                    ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
+                    ctx.stroke();
+                    ctx.fill();
+                } else if (currentTool === 'arrow') {
+                    drawArrow(ctx, startX, startY, curX, curY, strokeWidth, markerColor);
+                }
+            }
+        }
+
+        function stopDrawing() {
+            if (isDrawing) {
+                isDrawing = false;
+                saveCanvasState();
+            }
+        }
+
+        function drawArrow(ctx, fromx, fromy, tox, toy, width, color) {
+            const headlen = Math.max(14, width * 3);
+            const dx = tox - fromx;
+            const dy = toy - fromy;
+            const angle = Math.atan2(dy, dx);
+
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = width;
+            ctx.lineCap = 'round';
+
+            // Draw line
+            ctx.beginPath();
+            ctx.moveTo(fromx, fromy);
+            ctx.lineTo(tox, toy);
+            ctx.stroke();
+
+            // Draw arrowhead
+            ctx.beginPath();
+            ctx.moveTo(tox, toy);
+            ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function hexToRgba(hex, alpha) {
+            let c;
+            if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+                c = hex.substring(1).split('');
+                if (c.length === 3) c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+                c = '0x' + c.join('');
+                return `rgba(${[(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',')},${alpha})`;
+            }
+            return hex;
         }
     </script>
 </body>
