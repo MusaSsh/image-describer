@@ -1,0 +1,5 @@
+# Treat HTML and CSS as non-detectable so GitHub recognizes this repo as pure Python
+*.html linguist-detectable=false
+*.css linguist-detectable=false
+templates/** linguist-detectable=false
+static/** linguist-detectable=false
