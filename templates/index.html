@@ -775,6 +775,10 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            // If page was submitted via POST /analyze, normalize URL to /#describer
+            if (window.location.pathname === '/analyze') {
+                window.history.replaceState(null, '', '/#describer');
+            }
             const hash = window.location.hash.replace('#', '');
             if (hash === 'describer' || hash === 'home') {
                 switchTab(hash);

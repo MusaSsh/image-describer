@@ -3,7 +3,7 @@ import sqlite3
 import base64
 from datetime import datetime
 from fastapi import FastAPI, Request, File, UploadFile
-from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from google import genai
@@ -101,6 +101,10 @@ async def read_root(request: Request, tab: str = "home", q: str = ""):
         "active_tab": tab,
         "search_query": q
     })
+
+@app.get("/analyze")
+async def get_analyze_redirect():
+    return RedirectResponse(url="/#describer", status_code=303)
 
 @app.post("/analyze")
 async def analyze_image(request: Request, file: UploadFile = File(...)):
