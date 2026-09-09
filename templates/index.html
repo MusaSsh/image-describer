@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Describer — AI Vision</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Animated background blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+            </div>
+            <h1>Image Describer</h1>
+            <p class="subtitle">Upload any image and let AI tell you what's happening in it.</p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="card">
+            <form action="/analyze" method="post" enctype="multipart/form-data" id="upload-form">
+                
+                <!-- Drop Zone -->
+                <label for="file-input" class="dropzone" id="dropzone">
+                    <div class="dropzone-content" id="dropzone-content">
+                        <div class="dropzone-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                        </div>
+                        <p class="dropzone-title">Drop your image here</p>
+                        <p class="dropzone-hint">or click to browse</p>
+                        <div class="dropzone-formats">
+                            <span class="format-badge">PNG</span>
+                            <span class="format-badge">JPG</span>
+                            <span class="format-badge">JPEG</span>
+                            <span class="format-badge">WEBP</span>
+                        </div>
+                    </div>
+                    <!-- Image Preview -->
+                    <div class="preview-container hidden" id="preview-container">
+                        <img id="preview-image" src="" alt="Preview">
+                        <div class="preview-overlay">
+                            <span class="preview-change">Click to change image</span>
+                        </div>
+                    </div>
+                    <input id="file-input" type="file" name="file" accept="image/*" required />
+                </label>
+
+                <!-- File Info -->
+                <div class="file-info hidden" id="file-info">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    <span id="file-name"></span>
+                    <span id="file-size"></span>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-analyze" id="submit-btn">
+                    <span class="btn-text" id="btn-text">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                        Analyze Image
+                    </span>
+                    <span class="btn-loading hidden" id="btn-loading">
+                        <div class="spinner"></div>
+                        Analyzing...
+                    </span>
+                </button>
+            </form>
+        </div>
+
+        {% if error %}
+        <!-- Error Alert -->
+        <div class="result-card error-card animate-in">
+            <div class="result-header">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="15" y1="9" x2="9" y2="15"/>
+                    <line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+                <h2>Something went wrong</h2>
+            </div>
+            <p>{{ error }}</p>
+        </div>
+        {% endif %}
+
+        {% if description %}
+        <!-- Uploaded Image Display -->
+        {% if image_data %}
+        <div class="result-card image-card animate-in" id="uploaded-image-card">
+            <div class="result-header">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                </svg>
+                <h2>{{ filename }}</h2>
+                <button class="btn-remove" id="btn-remove" title="Remove image" onclick="removeImage()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="uploaded-image-wrapper">
+                <img src="{{ image_data }}" alt="{{ filename }}" class="uploaded-image">
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Result -->
+        <div class="result-card success-card animate-in">
+            <div class="result-header">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                <h2>Analysis of <em>{{ filename }}</em></h2>
+            </div>
+            <div class="result-body">
+                <p>{{ description }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Footer -->
+        <div class="footer">
+            Powered by <strong>Google Gemini</strong> &middot; Built with <strong>FastAPI</strong>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const dropzone = document.getElementById('dropzone');
+        const dropzoneContent = document.getElementById('dropzone-content');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImage = document.getElementById('preview-image');
+        const fileInfo = document.getElementById('file-info');
+        const fileName = document.getElementById('file-name');
+        const fileSize = document.getElementById('file-size');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnLoading = document.getElementById('btn-loading');
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const file = e.target.files[0];
+                
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    previewImage.src = ev.target.result;
+                    dropzoneContent.classList.add('hidden');
+                    previewContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+
+                // Show file info
+                fileName.textContent = file.name;
+                fileSize.textContent = formatFileSize(file.size);
+                fileInfo.classList.remove('hidden');
+                
+                // Activate button
+                dropzone.classList.add('has-file');
+            }
+        });
+
+        // Drag and drop visual feedback
+        ['dragenter', 'dragover'].forEach(evt => {
+            dropzone.addEventListener(evt, (e) => {
+                e.preventDefault();
+                dropzone.classList.add('drag-over');
+            });
+        });
+        ['dragleave', 'drop'].forEach(evt => {
+            dropzone.addEventListener(evt, (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('drag-over');
+            });
+        });
+
+        // Form submit loading state
+        document.getElementById('upload-form').addEventListener('submit', () => {
+            btnText.classList.add('hidden');
+            btnLoading.classList.remove('hidden');
+            submitBtn.disabled = true;
+        });
+
+        function removeImage() {
+            const card = document.getElementById('uploaded-image-card');
+            if (card) {
+                card.style.transition = 'all 0.3s ease';
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.95)';
+                setTimeout(() => card.remove(), 300);
+            }
+        }
+    </script>
+</body>
+</html>
