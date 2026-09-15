@@ -171,13 +171,16 @@ async def read_root(request: Request, tab: str = "home", q: str = ""):
     current_user = get_current_user(request)
     user_id = current_user["id"] if current_user else None
     history = get_user_history(user_id, q)
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "history": history,
-        "active_tab": tab,
-        "search_query": q,
-        "current_user": current_user
-    })
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={
+            "history": history,
+            "active_tab": tab,
+            "search_query": q,
+            "current_user": current_user
+        }
+    )
 
 @app.get("/analyze")
 async def get_analyze_redirect():
@@ -190,22 +193,28 @@ async def analyze_image(request: Request, file: UploadFile = File(...)):
     history = get_user_history(user_id)
 
     if not client:
-         return templates.TemplateResponse("index.html", {
-            "request": request, 
-            "error": "Gemini API key is not configured. Please add it to your .env file.",
-            "history": history,
-            "active_tab": "describer",
-            "current_user": current_user
-         })
+         return templates.TemplateResponse(
+            request=request, 
+            name="index.html",
+            context={
+                "error": "Gemini API key is not configured. Please add it to your .env file.",
+                "history": history,
+                "active_tab": "describer",
+                "current_user": current_user
+            }
+         )
          
     if not file.content_type.startswith("image/"):
-         return templates.TemplateResponse("index.html", {
-            "request": request, 
-            "error": "Uploaded file is not an image. Please upload a valid image file (PNG, JPG, JPEG, WEBP).",
-            "history": history,
-            "active_tab": "describer",
-            "current_user": current_user
-         })
+         return templates.TemplateResponse(
+            request=request, 
+            name="index.html",
+            context={
+                "error": "Uploaded file is not an image. Please upload a valid image file (PNG, JPG, JPEG, WEBP).",
+                "history": history,
+                "active_tab": "describer",
+                "current_user": current_user
+            }
+         )
 
     try:
         contents = await file.read()
@@ -234,25 +243,31 @@ async def analyze_image(request: Request, file: UploadFile = File(...)):
         
         updated_history = get_user_history(user_id)
         
-        return templates.TemplateResponse("index.html", {
-            "request": request, 
-            "description": description,
-            "filename": file.filename,
-            "image_data": image_data_uri,
-            "history": updated_history,
-            "active_tab": "describer",
-            "saved_id": new_id,
-            "current_user": current_user
-        })
+        return templates.TemplateResponse(
+            request=request, 
+            name="index.html",
+            context={
+                "description": description,
+                "filename": file.filename,
+                "image_data": image_data_uri,
+                "history": updated_history,
+                "active_tab": "describer",
+                "saved_id": new_id,
+                "current_user": current_user
+            }
+        )
         
     except Exception as e:
-        return templates.TemplateResponse("index.html", {
-            "request": request, 
-            "error": f"An error occurred: {str(e)}",
-            "history": history,
-            "active_tab": "describer",
-            "current_user": current_user
-        })
+        return templates.TemplateResponse(
+            request=request, 
+            name="index.html",
+            context={
+                "error": f"An error occurred: {str(e)}",
+                "history": history,
+                "active_tab": "describer",
+                "current_user": current_user
+            }
+        )
 
 # Authentication Endpoints
 @app.post("/signup")
@@ -262,12 +277,15 @@ async def signup(request: Request, full_name: str = Form(...), email: str = Form
     
     if not email_clean or not password or not full_name_clean:
         history = get_user_history()
-        return templates.TemplateResponse("index.html", {
-            "request": request,
-            "auth_error": "All fields are required for sign up.",
-            "history": history,
-            "active_tab": "home"
-        })
+        return templates.TemplateResponse(
+            request=request,
+            name="index.html",
+            context={
+                "auth_error": "All fields are required for sign up.",
+                "history": history,
+                "active_tab": "home"
+            }
+        )
     
     pwd_hash = hash_password(password)
     now_str = datetime.now().strftime("%b %d, %Y")
@@ -287,12 +305,15 @@ async def signup(request: Request, full_name: str = Form(...), email: str = Form
         return response
     except sqlite3.IntegrityError:
         history = get_user_history()
-        return templates.TemplateResponse("index.html", {
-            "request": request,
-            "auth_error": "An account with this email address already exists. Please Sign In.",
-            "history": history,
-            "active_tab": "home"
-        })
+        return templates.TemplateResponse(
+            request=request,
+            name="index.html",
+            context={
+                "auth_error": "An account with this email address already exists. Please Sign In.",
+                "history": history,
+                "active_tab": "home"
+            }
+        )
 
 @app.post("/login")
 async def login(request: Request, email: str = Form(...), password: str = Form(...)):
@@ -310,12 +331,15 @@ async def login(request: Request, email: str = Form(...), password: str = Form(.
             return response
 
     history = get_user_history()
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "auth_error": "Invalid email or password. Please try again.",
-        "history": history,
-        "active_tab": "home"
-    })
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={
+            "auth_error": "Invalid email or password. Please try again.",
+            "history": history,
+            "active_tab": "home"
+        }
+    )
 
 @app.get("/logout")
 async def logout():
