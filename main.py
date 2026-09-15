@@ -24,8 +24,11 @@ settings = Settings()
 app = FastAPI(title="VisionIQ — Image Describer & Studio")
 
 # Ensure data directory exists for persistent SQLite database
-os.makedirs("data", exist_ok=True)
-DB_PATH = "data/history.db"
+if os.environ.get("VERCEL"):
+    DB_PATH = "/tmp/history.db"
+else:
+    os.makedirs("data", exist_ok=True)
+    DB_PATH = "data/history.db"
 
 # Password Hashing Utilities
 def hash_password(password: str) -> str:
