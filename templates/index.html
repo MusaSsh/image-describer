@@ -48,6 +48,35 @@
                     <span>Image Describer</span>
                 </button>
             </nav>
+
+            <!-- User Auth Navigation Controls -->
+            <div class="nav-auth">
+                {% if current_user %}
+                <div class="user-badge" title="Logged in as {{ current_user.email }}">
+                    <div class="user-avatar">{{ current_user.full_name[0]|upper }}</div>
+                    <span class="user-name">{{ current_user.full_name }}</span>
+                </div>
+                <a href="/logout" class="btn-nav-logout" title="Sign Out">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    <span>Sign Out</span>
+                </a>
+                {% else %}
+                <button type="button" class="btn-nav-login" onclick="openAuthModal('login')">Sign In</button>
+                <button type="button" class="btn-nav-signup" onclick="openAuthModal('signup')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="8.5" cy="7" r="4"/>
+                        <line x1="20" y1="8" x2="20" y2="14"/>
+                        <line x1="17" y1="11" x2="23" y2="11"/>
+                    </svg>
+                    <span>Sign Up Free</span>
+                </button>
+                {% endif %}
+            </div>
         </div>
     </header>
 
@@ -730,6 +759,78 @@
         </div>
     </div>
 
+    <!-- User Authentication Modal (Sign In / Sign Up) -->
+    <div class="modal-backdrop {% if not auth_error %}hidden{% endif %}" id="auth-modal" onclick="closeAuthModal(event)">
+        <div class="auth-card" onclick="event.stopPropagation()">
+            <div class="auth-header">
+                <div class="auth-title-group">
+                    <div class="logo-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </div>
+                    <h3 id="auth-modal-title">Welcome to VisionIQ</h3>
+                </div>
+                <button type="button" class="modal-close-btn" onclick="closeAuthModal()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Auth Form Switcher Tabs -->
+            <div class="auth-tabs">
+                <button type="button" class="auth-tab-btn active" id="auth-tab-login" onclick="toggleAuthTab('login')">Sign In</button>
+                <button type="button" class="auth-tab-btn" id="auth-tab-signup" onclick="toggleAuthTab('signup')">Sign Up Free</button>
+            </div>
+
+            {% if auth_error %}
+            <div class="auth-alert-error animate-in">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <span>{{ auth_error }}</span>
+            </div>
+            {% endif %}
+
+            <!-- SIGN IN FORM -->
+            <form action="/login" method="post" class="auth-form" id="form-login">
+                <div class="form-group">
+                    <label for="login-email">Email Address</label>
+                    <input type="email" id="login-email" name="email" placeholder="you@company.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-auth-submit">Sign In to Account</button>
+                <p class="auth-footer-note">Don't have an account yet? <a href="#" onclick="toggleAuthTab('signup'); return false;">Sign Up Free</a></p>
+            </form>
+
+            <!-- SIGN UP FORM -->
+            <form action="/signup" method="post" class="auth-form hidden" id="form-signup">
+                <div class="form-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" name="full_name" placeholder="John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email Address</label>
+                    <input type="email" id="signup-email" name="email" placeholder="you@company.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" name="password" placeholder="Create a password" required minlength="6">
+                </div>
+                <button type="submit" class="btn-auth-submit">Create Free Account</button>
+                <p class="auth-footer-note">Already have an account? <a href="#" onclick="toggleAuthTab('login'); return false;">Sign In</a></p>
+            </form>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div class="toast hidden" id="toast">Copied to clipboard!</div>
 
@@ -746,6 +847,47 @@
 
     <!-- JavaScript logic -->
     <script>
+        // Auth Modal Handlers
+        function openAuthModal(mode) {
+            const modal = document.getElementById('auth-modal');
+            toggleAuthTab(mode || 'login');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeAuthModal(e) {
+            if (e && e.target !== e.currentTarget && e.target.closest('.auth-card')) return;
+            const modal = document.getElementById('auth-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function toggleAuthTab(mode) {
+            const loginBtn = document.getElementById('auth-tab-login');
+            const signupBtn = document.getElementById('auth-tab-signup');
+            const loginForm = document.getElementById('form-login');
+            const signupForm = document.getElementById('form-signup');
+            const title = document.getElementById('auth-modal-title');
+
+            if (mode === 'signup') {
+                if (signupBtn) signupBtn.classList.add('active');
+                if (loginBtn) loginBtn.classList.remove('active');
+                if (signupForm) signupForm.classList.remove('hidden');
+                if (loginForm) loginForm.classList.add('hidden');
+                if (title) title.textContent = 'Create VisionIQ Account';
+            } else {
+                if (loginBtn) loginBtn.classList.add('active');
+                if (signupBtn) signupBtn.classList.remove('active');
+                if (loginForm) loginForm.classList.remove('hidden');
+                if (signupForm) signupForm.classList.add('hidden');
+                if (title) title.textContent = 'Sign In to VisionIQ';
+            }
+        }
+
         // Tab switching
         function switchTab(tabName) {
             const homeBtn = document.getElementById('tab-btn-home');
