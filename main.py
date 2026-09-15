@@ -13,22 +13,28 @@ from pydantic_settings import BaseSettings
 from io import BytesIO
 from PIL import Image
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 class Settings(BaseSettings):
     gemini_api_key: str = ""
     
     class Config:
         env_file = ".env"
+        extra = "ignore"
 
 settings = Settings()
 
 app = FastAPI(title="VisionIQ — Image Describer & Studio")
 
 # Ensure data directory exists for persistent SQLite database
-if os.environ.get("VERCEL"):
+DB_PATH = "/tmp/history.db"
+try:
+    if not os.environ.get("VERCEL"):
+        data_dir = os.path.join(BASE_DIR, "data")
+        os.makedirs(data_dir, exist_ok=True)
+        DB_PATH = os.path.join(data_dir, "history.db")
+except Exception:
     DB_PATH = "/tmp/history.db"
-else:
-    os.makedirs("data", exist_ok=True)
-    DB_PATH = "data/history.db"
 
 # Password Hashing Utilities
 def hash_password(password: str) -> str:
@@ -146,10 +152,13 @@ def clear_all_history_records(user_id: int = None):
         conn.commit()
 
 # Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # Templates
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 # Initialize Gemini Client
 if settings.gemini_api_key:
