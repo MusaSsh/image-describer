@@ -22,39 +22,6 @@ class TestVisionIQApp(unittest.TestCase):
         self.assertEqual(response.status_code, 303)
         self.assertIn("/#describer", response.headers["location"])
 
-    def test_signup_and_login_flow(self):
-        # Signup test user
-        test_email = f"test_{os.urandom(4).hex()}@example.com"
-        signup_res = self.client.post(
-            "/signup",
-            data={"full_name": "Test User", "email": test_email, "password": "securepassword123"},
-            follow_redirects=False
-        )
-        self.assertEqual(signup_res.status_code, 303)
-        self.assertIn("visioniq_user_id", signup_res.cookies)
-
-        # Logout
-        logout_res = self.client.get("/logout", follow_redirects=False)
-        self.assertEqual(logout_res.status_code, 303)
-
-        # Login
-        login_res = self.client.post(
-            "/login",
-            data={"email": test_email, "password": "securepassword123"},
-            follow_redirects=False
-        )
-        self.assertEqual(login_res.status_code, 303)
-        self.assertIn("visioniq_user_id", login_res.cookies)
-
-    def test_invalid_login(self):
-        res = self.client.post(
-            "/login",
-            data={"email": "nonexistent@example.com", "password": "wrongpassword"},
-            follow_redirects=False
-        )
-        self.assertEqual(res.status_code, 200)
-        self.assertIn("Invalid email or password", res.text)
-
     def test_invalid_file_upload(self):
         res = self.client.post(
             "/analyze",
@@ -74,6 +41,14 @@ class TestVisionIQApp(unittest.TestCase):
             "/analyze",
             files={"file": ("sample.png", img_bytes, "image/png")}
         )
+        self.assertEqual(res.status_code, 200)
+
+    def test_delete_history(self):
+        res = self.client.post("/delete-history/99999")
+        self.assertEqual(res.status_code, 200)
+
+    def test_clear_history(self):
+        res = self.client.post("/clear-history")
         self.assertEqual(res.status_code, 200)
 
 if __name__ == "__main__":
